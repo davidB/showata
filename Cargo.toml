@@ -11,8 +11,8 @@ readme = "README.md"
 keywords = ["evcxr", "jupyter", "visualization", "plot", "vega"]
 
 [dependencies]
-base64 = "^0.13"
-opener = "^0.4"
+base64 = "^0.22"
+opener = "^0.7"
 anyhow = "^1.0"
 
 #arrow = {version = "0.13.0", optional = true} # nightly

@@ -21,6 +21,7 @@ mod show_ndarray;
 mod show_image;
 
 use anyhow::Error;
+use base64::prelude::*;
 use std::path::Path;
 use std::path::PathBuf;
 use std::time::SystemTime;
@@ -147,7 +148,7 @@ pub fn show_text_in_jupyter<M: AsRef<str>, S: AsRef<str>>(mime_type: M, text: S)
 /// ```
 // TODO replace by evcxr_runtime ?
 pub fn show_bytes_in_jupyter<S: AsRef<str>>(mime_type: S, buffer: &[u8]) {
-    show_text_in_jupyter(mime_type, base64::encode(buffer))
+    show_text_in_jupyter(mime_type, BASE64_STANDARD.encode(buffer))
 }
 
 /// Display the content of a local file.

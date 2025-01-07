@@ -12,7 +12,7 @@
 use crate::ContentInfo;
 use crate::Showable;
 use anyhow::{anyhow, Error};
-use base64;
+use base64::prelude::*;
 use image;
 use std::ops::Deref;
 
@@ -46,7 +46,7 @@ where
             <P as image::Pixel>::COLOR_TYPE,
         )?;
         Ok(ContentInfo {
-            content: base64::encode(&buffer),
+            content: BASE64_STANDARD.encode(&buffer),
             mime_type: "image/png;base64".into(),
         })
     }
