@@ -14,6 +14,9 @@ use crate::Showable;
 use anyhow::{anyhow, Error};
 use base64::prelude::*;
 use image;
+use image::EncodableLayout;
+use image::PixelWithColorType;
+use std::io::Cursor;
 use std::ops::Deref;
 
 impl Showable for image::DynamicImage {
@@ -34,17 +37,14 @@ impl Showable for image::DynamicImage {
 
 impl<P, Container> Showable for image::ImageBuffer<P, Container>
 where
-    P: image::Pixel<Subpixel = u8> + 'static,
-    Container: Deref<Target = [u8]>,
+    P: PixelWithColorType,
+    [P::Subpixel]: EncodableLayout,
+    Container: Deref<Target = [P::Subpixel]>,
 {
     fn to_content_info(&self) -> Result<ContentInfo, Error> {
-        let mut buffer = Vec::new();
-        image::png::PngEncoder::new(&mut buffer).encode(
-            self,
-            self.width(),
-            self.height(),
-            <P as image::Pixel>::COLOR_TYPE,
-        )?;
+        let mut buffer: Vec<u8> = Vec::new();
+        self.write_to(&mut Cursor::new(&mut buffer), image::ImageFormat::Png)?;
+
         Ok(ContentInfo {
             content: BASE64_STANDARD.encode(&buffer),
             mime_type: "image/png;base64".into(),
@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_show_gen_image() {
-        let img = image::ImageBuffer::from_fn(256, 256, |x, y| {
+        let img = image::RgbImage::from_fn(256, 256, |x, y| {
             if (x as i32 - y as i32).abs() < 3 {
                 image::Rgb([0, 0, 255])
             } else {

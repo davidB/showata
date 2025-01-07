@@ -34,7 +34,7 @@ where
             html.push_str(&format!("<th>{}</th>", c));
         }
         html.push_str("</tr>");
-        for (r, row) in v.genrows().into_iter().enumerate() {
+        for (r, row) in v.rows().into_iter().enumerate() {
             html.push_str("<tr>");
             html.push_str(&format!("<th>{}</th>", r));
             for v in row.iter() {
